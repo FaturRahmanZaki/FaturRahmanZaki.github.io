@@ -191,23 +191,35 @@
           </div>
         </div>
         <div class="row justify-content-center">
+          
           <div class="col-md-6 ">
-            <form>
+            
+        <div class="alert alert-warning alert-dismissible fade show d-none my-alert" role="alert">
+          <strong>Terima Kasih</strong> Pesan Anda Sudah kami Terima
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+            <form name="submit-to-google-sheet">
               <div class="mb-3">
                 <label for="nama" class="form-label">Nama </label>
-                <input type="text" class="form-control" id="nama" aria-describedby="nama">
+                <input type="text" class="form-control" name="nama" id="nama" aria-describedby="nama">
               </div>
               
               <div class="mb-3">
                 <label for="email" class="form-label">Email </label>
-                <input type="email" class="form-control" id="email" aria-describedby="email">
+                <input type="email" class="form-control" name="email" id="email" aria-describedby="email">
               </div>
               
               <div class="mb-3">
                 <label for="pesan" class="form-label">Pesan</label>
-                <textarea class="form-control" id="pesan" rows="3"></textarea>
+                <textarea class="form-control" name="pesan" id="pesan" rows="3"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary">Send</button>
+              <button type="submit" class="btn btn-primary btn-kirim">Send</button>
+              <!-- Loading -->
+              <button class="btn btn-primary btn-loading d-none" type="button" disabled>
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                Loading...
+              </button>
+              <!-- Loading End -->
             </form>
           </div>
         </div>
@@ -227,5 +239,34 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <script>
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbx_HhIqhF72V6mrbKN1GO23UuqJLBfSD3ImTZtArYgtzXxDuiTSxhDKmjBzHWevebJZ/exec'
+      const form = document.forms['submit-to-google-sheet'];
+      const btnKirim = document.querySelector ('.btn-kirim');
+      const btnLoading = document.querySelector ('.btn-loading');
+      const myAlert = document.querySelector ('.my-alert');
+    
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        // Ketika Tombol Submit diklik
+        // tampilkan tombol loading,hilangkan tombol kirim
+        btnLoading.classList.toggle('d-none');
+        btnKirim.classList.toggle('d-none');
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+          .then(response => {
+            // tampilkan tombol kirim,hilangkan tombol loading
+            btnLoading.classList.toggle('d-none');
+            btnKirim.classList.toggle('d-none');
+            // Tambilkan alert
+            myAlert.classList.toggle('d-none');
+            // Reset Form
+            form.reset();
+            
+            console.log('Success!', response);
+
+          })
+          .catch(error => console.error('Error!', error.message))
+      })
+    </script>
   </body>
 </html>
